@@ -3,23 +3,24 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
-    public float walkSpeed = 4f;
-    public float runSpeed = 7f;
-    public float jumpForce = 6f;
-    public float rotationSpeed = 10f;
+    public float walkSpeed = 2f;
+    public float runSpeed = 5f;
+    public float jumpForce = 4f;
+    public float rotationSpeed = 8f;
 
     [Header("Ground Check")]
     public Transform groundCheck;
     public float groundDistance = 0.3f;
     public LayerMask groundLayer;
 
-    [Header("Interaction")]
-    public float interactRange = 2f;
-
     private Rigidbody rb;
     private Animator animator;
+
     private bool isGrounded;
-    private float currentSpeed;
+    private bool isPerformingAction;
+
+    private Vector3 moveInput;
+    private float targetSpeed;
 
     void Start()
     {
@@ -31,50 +32,93 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         CheckGround();
-        HandleMovement();
-        HandleJump();
-        HandleInteraction();
+
+        if (!isPerformingAction)
+        {
+            ReadMovementInput();
+            HandleActions();
+        }
+
+        UpdateAnimator();
     }
 
-    void HandleMovement()
+    void FixedUpdate()
+    {
+        if (!isPerformingAction)
+            MoveCharacter();
+        else
+            rb.linearVelocity = Vector3.zero;
+    }
+
+    // ---------------- MOVEMENT ----------------
+
+    void ReadMovementInput()
     {
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
 
-        Vector3 direction = new Vector3(h, 0, v).normalized;
+        moveInput = new Vector3(h, 0, v).normalized;
 
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        currentSpeed = isRunning ? runSpeed : walkSpeed;
+        targetSpeed = isRunning ? runSpeed : walkSpeed;
 
-        Vector3 velocity = direction * currentSpeed;
-        rb.linearVelocity = new Vector3(velocity.x, rb.linearVelocity.y, velocity.z);
-
-        // Rotation
-        if (direction.magnitude > 0.1f)
+        if (moveInput.magnitude > 0.1f)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                targetRotation,
-                rotationSpeed * Time.deltaTime
-            );
-        }
-
-        // Animation
-        if (animator)
-        {
-            animator.SetFloat("Speed", direction.magnitude * currentSpeed);
+            Quaternion rot = Quaternion.LookRotation(moveInput);
+            transform.rotation = Quaternion.Slerp(transform.rotation, rot, rotationSpeed * Time.deltaTime);
         }
     }
 
-    void HandleJump()
+    void MoveCharacter()
+    {
+        Vector3 velocity = moveInput * targetSpeed;
+        rb.linearVelocity = new Vector3(velocity.x, rb.linearVelocity.y, velocity.z);
+    }
+
+    // ---------------- ACTIONS ----------------
+
+    void HandleActions()
     {
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             animator.SetTrigger("Jump");
         }
+
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            PerformAction("Roll");
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            PerformAction("LightAttack");
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            PerformAction("HeavyAttack");
+        }
     }
+
+    void PerformAction(string trigger)
+    {
+        if (isPerformingAction) return;
+
+        isPerformingAction = true;
+        animator.SetTrigger(trigger);
+    }
+
+    // ---------------- ANIMATION ----------------
+
+    void UpdateAnimator()
+    {
+        float animSpeed = moveInput.magnitude * targetSpeed;
+        animator.SetFloat("Speed", animSpeed);
+        animator.SetBool("IsGrounded", isGrounded);
+    }
+
+    // ---------------- GROUND ----------------
 
     void CheckGround()
     {
@@ -83,35 +127,13 @@ public class PlayerController : MonoBehaviour
             groundDistance,
             groundLayer
         );
-
-        animator.SetBool("IsGrounded", isGrounded);
     }
 
-    void HandleInteraction()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            Collider[] hits = Physics.OverlapSphere(transform.position, interactRange);
-            foreach (Collider hit in hits)
-            {
-                if (hit.CompareTag("Letter"))
-                {
-                    hit.GetComponent<LetterInteract>().Interact();
-                    break;
-                }
-            }
-        }
-    }
+    // ---------------- ANIMATION EVENT ----------------
 
-    private void OnDrawGizmosSelected()
+    // CALL THIS AT END OF Roll / Attack animations
+    public void EndAction()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, interactRange);
-
-        if (groundCheck)
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(groundCheck.position, groundDistance);
-        }
+        isPerformingAction = false;
     }
 }
