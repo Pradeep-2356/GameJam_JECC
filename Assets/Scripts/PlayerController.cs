@@ -17,6 +17,9 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayers; // <-- plural
 
 
+    [Header("Interaction")]
+    public float interactRange = 2f;
+    public LayerMask interactLayer; // Layer for Letter
     private Rigidbody rb;
     private Animator animator;
 
@@ -118,7 +121,27 @@ public class PlayerController : MonoBehaviour
         {
             PerformAction("HeavyAttack");
         }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            TryInteract();
+        }
     }
+
+    void TryInteract()
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, interactRange, interactLayer);
+
+        foreach (Collider hit in hits)
+        {
+            LetterInteract letter = hit.GetComponentInParent<LetterInteract>();
+            if (letter != null)
+            {
+                letter.Interact();
+                break;
+            }
+        }
+    }
+
 
     void PerformAction(string trigger)
     {
