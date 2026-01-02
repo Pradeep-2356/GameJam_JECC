@@ -6,7 +6,10 @@ public class PlayerController : MonoBehaviour
     public float walkSpeed = 2f;
     public float runSpeed = 5f;
     public float jumpForce = 4f;
-    public float rotationSpeed = 8f;
+    public float rotationSpeed = 10f;
+
+    [Header("Camera")]
+    public Transform cameraTransform; // Assign Cinemachine Main Camera
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -47,7 +50,7 @@ public class PlayerController : MonoBehaviour
         if (!isPerformingAction)
             MoveCharacter();
         else
-            rb.linearVelocity = Vector3.zero;
+            rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
     }
 
     // ---------------- MOVEMENT ----------------
@@ -57,15 +60,28 @@ public class PlayerController : MonoBehaviour
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
 
-        moveInput = new Vector3(h, 0, v).normalized;
+        Vector3 camForward = cameraTransform.forward;
+        Vector3 camRight = cameraTransform.right;
+
+        camForward.y = 0;
+        camRight.y = 0;
+
+        camForward.Normalize();
+        camRight.Normalize();
+
+        moveInput = (camForward * v + camRight * h).normalized;
 
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
         targetSpeed = isRunning ? runSpeed : walkSpeed;
 
         if (moveInput.magnitude > 0.1f)
         {
-            Quaternion rot = Quaternion.LookRotation(moveInput);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rot, rotationSpeed * Time.deltaTime);
+            Quaternion targetRot = Quaternion.LookRotation(moveInput);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                targetRot,
+                rotationSpeed * Time.deltaTime
+            );
         }
     }
 
@@ -131,7 +147,6 @@ public class PlayerController : MonoBehaviour
 
     // ---------------- ANIMATION EVENT ----------------
 
-    // CALL THIS AT END OF Roll / Attack animations
     public void EndAction()
     {
         isPerformingAction = false;
