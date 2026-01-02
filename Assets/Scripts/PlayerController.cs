@@ -14,7 +14,8 @@ public class PlayerController : MonoBehaviour
     [Header("Ground Check")]
     public Transform groundCheck;
     public float groundDistance = 0.3f;
-    public LayerMask groundLayer;
+    public LayerMask groundLayers; // <-- plural
+
 
     private Rigidbody rb;
     private Animator animator;
@@ -30,6 +31,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         rb.freezeRotation = true;
+
     }
 
     void Update()
@@ -43,6 +45,7 @@ public class PlayerController : MonoBehaviour
         }
 
         UpdateAnimator();
+        
     }
 
     void FixedUpdate()
@@ -138,12 +141,14 @@ public class PlayerController : MonoBehaviour
 
     void CheckGround()
     {
-        isGrounded = Physics.CheckSphere(
-            groundCheck.position,
-            groundDistance,
-            groundLayer
-        );
+    isGrounded = Physics.Raycast(
+        transform.position + Vector3.up * 0.1f,
+        Vector3.down,
+        0.4f,
+        groundLayers
+    );
     }
+
 
     // ---------------- ANIMATION EVENT ----------------
 
