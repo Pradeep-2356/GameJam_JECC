@@ -1,13 +1,14 @@
-﻿// using UnityEngine;
-// using System.Collections;
+﻿using UnityEngine;
 
-// public class NPC : Interactable {
-//     public string[] dialogue;
-//     public string name;
+public class NPC : Interactable
+{
+    public string npcName;
 
-//     public override void Interact()
-//     {
-//         DialogueSystem.Instance.AddNewDialogue(dialogue, name);
-//         Debug.Log("Interacting with NPC.");
-//     }
-// }
+    [TextArea]
+    public string[] dialogue;
+
+    public override void Interact()
+    {
+        DialogueSystem.Instance.AddNewDialogue(dialogue, npcName);
+    }
+}
