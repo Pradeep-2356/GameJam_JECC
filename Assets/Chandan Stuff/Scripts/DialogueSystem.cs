@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class DialogueSystem : MonoBehaviour
 {
+    public static bool IsDialogueActive;
     public static DialogueSystem Instance;
 
     public Text nameText;
@@ -18,16 +19,18 @@ public class DialogueSystem : MonoBehaviour
     }
 
     public void AddNewDialogue(string[] dialogue, string npcName)
-    {
-        gameObject.SetActive(true);
-        nameText.text = npcName;
-        lines.Clear();
+{
+    gameObject.SetActive(true);
+    IsDialogueActive = true;
 
-        foreach (string line in dialogue)
-            lines.Enqueue(line);
+    nameText.text = npcName;
+    lines.Clear();
 
-        DisplayNextLine();
-    }
+    foreach (string line in dialogue)
+        lines.Enqueue(line);
+
+    DisplayNextLine();
+}
 
     void Update()
     {
@@ -38,13 +41,15 @@ public class DialogueSystem : MonoBehaviour
     }
 
     void DisplayNextLine()
+{
+    if (lines.Count == 0)
     {
-        if (lines.Count == 0)
-        {
-            gameObject.SetActive(false);
-            return;
-        }
-
-        dialogueText.text = lines.Dequeue();
+        IsDialogueActive = false;
+        gameObject.SetActive(false);
+        return;
     }
+
+    dialogueText.text = lines.Dequeue();
+}
+
 }

@@ -1,53 +1,55 @@
-// using System.Collections;
-// using System.Collections.Generic;
-// using UnityEngine;
+using UnityEngine;
 
-// public class QuestGiver : NPC {
-//     public bool AssignedQuest { get; set; }
-//     public bool Helped { get; set; }
+public class QuestGiver : NPC
+{
+    private bool questTurnedIn = false;
+    public string[] questDialogue;
+    public string[] reminderDialogue;
+    public string[] completionDialogue;
 
-//     [SerializeField]
-//     private GameObject quests;
+    private Quest quest;
 
-//     [SerializeField]
-//     private string questType;
-//     private Quest Quest { get; set; }
-//     public override void Interact()
-//     {
-        
-//         if (!AssignedQuest && !Helped)
-//         {
-//             base.Interact();
-//             AssignQuest();
-//         }
-//         else if(AssignedQuest && !Helped)
-//         {
-//             CheckQuest();
-//         }
-//         else
-//         {
-//             DialogueSystem.Instance.AddNewDialogue(new string[] { "Thanks for that stuff that one time." }, name);
-//         }
-//     }
+    public override void Interact()
+{
+    // QUEST NOT YET ASSIGNED
+    if (quest == null)
+    {
+        AssignQuest();
+        DialogueSystem.Instance.AddNewDialogue(questDialogue, npcName);
+        return;
+    }
 
-//     void AssignQuest()
-//     {
-//         AssignedQuest = true;
-//         Quest = (Quest)quests.AddComponent(System.Type.GetType(questType));
-//     }
+    // QUEST ASSIGNED BUT NOT COMPLETED
+    if (!quest.Completed)
+    {
+        DialogueSystem.Instance.AddNewDialogue(reminderDialogue, npcName);
+        return;
+    }
 
-//     void CheckQuest()
-//     {
-//         if (Quest.Completed)
-//         {
-//             Quest.GiveReward();
-//             Helped = true;
-//             AssignedQuest = false;
-//             DialogueSystem.Instance.AddNewDialogue(new string[] {"Thanks for that! Here's your reward.", "More dialogue"}, name);
-//         }
-//         else
-//         {
-//             DialogueSystem.Instance.AddNewDialogue(new string[] { "You're still in the middle of helping me. Get back at it!"}, name);
-//         }
-//     }
-// }
+    // QUEST COMPLETED BUT NOT TURNED IN
+    if (quest.Completed && !questTurnedIn)
+    {
+        questTurnedIn = true;
+        DialogueSystem.Instance.AddNewDialogue(completionDialogue, npcName);
+        quest.GiveReward();
+        return;
+    }
+
+    // QUEST ALREADY TURNED IN
+    DialogueSystem.Instance.AddNewDialogue(
+        new string[] { "Thank you again, hero." },
+        npcName
+    );
+}
+
+
+    void AssignQuest()
+{
+    quest = gameObject.AddComponent<Quest>();
+    quest.QuestName = "Kill the Enemy";
+    quest.Description = "Eliminate the threat nearby";
+
+    quest.Goals.Add(new KillGoal(quest, 1, 1));
+}
+
+}
