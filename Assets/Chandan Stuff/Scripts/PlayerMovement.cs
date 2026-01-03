@@ -4,8 +4,11 @@ public class PlayerMovement : MonoBehaviour
 {
     public float speed = 5f;
 
-    void Update()
+   void Update()
 {
+    if (DialogueSystem.IsDialogueActive)
+        return;
+
     float x = Input.GetAxis("Horizontal");
     float z = Input.GetAxis("Vertical");
 
@@ -16,4 +19,5 @@ public class PlayerMovement : MonoBehaviour
 
     transform.Translate(move * speed * Time.deltaTime, Space.World);
 }
+
 }

@@ -1,36 +1,24 @@
-// using System.Collections;
-// using System.Collections.Generic;
-// using UnityEngine;
-// using System.Linq;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
-// public class Quest : MonoBehaviour {
-//     private int level;
-//     public int Level {
-//         get
-//         {
-//             return level;
-//         }
-//         set
-//         {
-//             level = value;
-//         }
-//     }
+public class Quest : MonoBehaviour
+{
+    public string QuestName;
+    public string Description;
 
-//     public List<Goal> Goals { get; set; }
-//     public string QuestName { get; set; }
-//     public string Description { get; set; }
-//     public int ExperienceReward { get; set; }
-//     public Item ItemReward { get; set; }
-//     public bool Completed { get; set; }
+    public List<Goal> Goals = new List<Goal>();
+    public bool Completed;
 
-//     public void CheckGoals()
-//     {
-//         Completed = Goals.All(g => g.Completed);
-//     }
+    public void CheckGoals()
+{
+    Completed = Goals.All(g => g.Completed);
+    Debug.Log("Quest completed status: " + Completed);
+}
 
-//     public void GiveReward()
-//     {
-//         if (ItemReward != null)
-//             InventoryController.Instance.GiveItem(ItemReward);
-//     }
-// }
+
+    public void GiveReward()
+    {
+        Debug.Log("Quest completed: " + QuestName);
+    }
+}

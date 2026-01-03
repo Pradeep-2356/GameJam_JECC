@@ -1,34 +1,36 @@
-// using System.Collections;
-// using System.Collections.Generic;
-// using UnityEngine;
+using UnityEngine;
 
-// public class KillGoal : Goal {
-//     public int EnemyID { get; set; }
+public class KillGoal : Goal
+{
+    private int targetEnemyID;
+    private int requiredAmount;
+    private int currentAmount;
 
-//     public KillGoal(Quest quest, int enemyID, string description, bool completed, int currentAmount, int requiredAmount)
-//     {
-//         this.Quest = quest;
-//         this.EnemyID = enemyID;
-//         this.Description = description;
-//         this.Completed = completed;
-//         this.CurrentAmount = currentAmount;
-//         this.RequiredAmount = requiredAmount;
-//     }
+    public KillGoal(Quest quest, int enemyID, int amount)
+    {
+        Quest = quest;
+        targetEnemyID = enemyID;
+        requiredAmount = amount;
+        Init();
+    }
 
-//     public override void Init()
-//     {
-//         base.Init();
-//         CombatEvents.OnEnemyDeath += EnemyDied;
-//     }
+    public override void Init()
+    {
+        CombatEvents.OnEnemyKilled += OnEnemyKilled;
+    }
 
-//     void EnemyDied(IEnemy enemy)
-//     {
-//         if (enemy.ID == this.EnemyID)
-//         {
-//             Debug.Log("Detected enemy death: " + EnemyID);
-//             this.CurrentAmount++;
-//             Evaluate();
-//         }
-//     }
+    void OnEnemyKilled(IEnemy enemy)
+    {
+        if (enemy.ID == targetEnemyID)
+        {
+            currentAmount++;
+            Debug.Log($"Kill progress: {currentAmount}/{requiredAmount}");
 
-// }
+            if (currentAmount >= requiredAmount)
+            {
+                Complete();
+                CombatEvents.OnEnemyKilled -= OnEnemyKilled;
+            }
+        }
+    }
+}

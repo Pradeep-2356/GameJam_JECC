@@ -2,24 +2,23 @@ using UnityEngine;
 
 public class PlayerInteraction : MonoBehaviour
 {
-    public float interactDistance = 2f;
+    public float interactDistance = 3f;
 
     void Update()
     {
-        Debug.DrawRay(transform.position, transform.forward * interactDistance, Color.red);
+        if (DialogueSystem.IsDialogueActive)
+            return;
 
-        if (Input.GetKeyDown(KeyCode.E))
+        Vector3 origin = transform.position + Vector3.up * 0.8f;
+        RaycastHit hit;
+
+        if (Physics.Raycast(origin, transform.forward, out hit, interactDistance))
         {
-            RaycastHit hit;
+            Interactable interactable = hit.collider.GetComponent<Interactable>();
 
-            if (Physics.Raycast(transform.position, transform.forward, out hit, interactDistance))
+            if (interactable != null && Input.GetKeyDown(KeyCode.E))
             {
-                Interactable interactable = hit.collider.GetComponent<Interactable>();
-
-                if (interactable != null)
-                {
-                    interactable.Interact();
-                }
+                interactable.Interact();
             }
         }
     }

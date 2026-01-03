@@ -1,27 +1,16 @@
-// using UnityEngine;
+using UnityEngine;
 
-// public class Goal
-// {
-//     public string Description { get; set; }
-//     public bool Completed { get; set; }
-//     public int CurrentAmount { get; set; }
-//     public int RequiredAmount { get; set; }
-  
-//     public virtual void Init()
-//     {
-//         // default init stuff
-//     }
-//     public void Evaluate()
-//     {
-//         if (CurrentAmount >= RequiredAmount)
-//         {
-//             Complete();
-//         }     
-//     }
-//     public void Complete()
-//     {
-//         Completed = true;
-//     }
+public class Goal
+{
+    public Quest Quest;
+    public bool Completed;
 
+    public virtual void Init() { }
 
-// }
+    public void Complete()
+    {
+        Completed = true;
+        Quest.CheckGoals();
+    }
+}
+
