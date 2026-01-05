@@ -2,9 +2,6 @@ using UnityEngine;
 
 public class LetterInteract : MonoBehaviour
 {
-    [TextArea(5, 10)]
-    public string letterContent;
-
     private bool isOpened = false;
 
     public void Interact()
@@ -12,8 +9,7 @@ public class LetterInteract : MonoBehaviour
         if (isOpened) return;
 
         isOpened = true;
-
-        UIManager.Instance.ShowLetter(letterContent);
+        UIManager.Instance.ShowLetter();
 
         gameObject.SetActive(false);
     }

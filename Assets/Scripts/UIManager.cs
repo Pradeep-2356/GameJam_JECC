@@ -1,13 +1,10 @@
 using UnityEngine;
-using TMPro;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
 
-    [Header("Letter UI")]
     public GameObject letterPanel;
-    public TextMeshProUGUI letterText;
 
     private Animator animator;
     private bool isLetterOpen = false;
@@ -32,20 +29,16 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void ShowLetter(string content)
+    public void ShowLetter()
     {
         if (isLetterOpen) return;
 
         isLetterOpen = true;
 
-        letterText.text = content;
-
-        // DO NOT enable/disable panel
         animator.ResetTrigger("Close");
         animator.SetTrigger("Open");
 
         Time.timeScale = 0f;
-
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -60,7 +53,6 @@ public class UIManager : MonoBehaviour
         animator.SetTrigger("Close");
 
         Time.timeScale = 1f;
-
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
