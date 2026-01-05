@@ -2,19 +2,19 @@ using UnityEngine;
 
 public class LetterInteract : MonoBehaviour
 {
-    private Animator animator;
-    private bool isOpened = false;
+    [TextArea(5, 10)]
+    public string letterContent;
 
-    void Start()
-    {
-        animator = GetComponent<Animator>();
-    }
+    private bool isOpened = false;
 
     public void Interact()
     {
         if (isOpened) return;
 
         isOpened = true;
-        animator.SetTrigger("OpenLetter");
+
+        UIManager.Instance.ShowLetter(letterContent);
+
+        gameObject.SetActive(false);
     }
 }
