@@ -2,26 +2,35 @@ using UnityEngine;
 
 public class BlacksmithInteraction : MonoBehaviour
 {
-    private Animator animator;
+    private bool playerInRange;
+    private PlayerWeapon playerWeapon;
 
-    void Start()
+    private void Update()
     {
-        animator = GetComponent<Animator>();
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
+        if (playerInRange && Input.GetKeyDown(KeyCode.E))
         {
-            animator.SetBool("IsTalking", true);
+            DialogueManager.Instance.OpenDialogue();
+
+            if (playerWeapon != null)
+                playerWeapon.EquipSword();
         }
     }
 
-    void OnTriggerExit(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            animator.SetBool("IsTalking", false);
+            playerInRange = true;
+            playerWeapon = other.GetComponent<PlayerWeapon>();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playerInRange = false;
+            DialogueManager.Instance.CloseDialogue();
         }
     }
 }
