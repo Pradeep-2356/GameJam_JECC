@@ -5,6 +5,8 @@ public class PlayerHealth : MonoBehaviour
     public int maxHealth = 100;
     public int currentHealth;
 
+    public HealthBar healthBar;
+
     private Animator animator;
     private bool isDead;
 
@@ -12,30 +14,39 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth = maxHealth;
         animator = GetComponent<Animator>();
+
+        healthBar.SetMaxHealth(maxHealth);
     }
 
-    public void TakeDamage(int damage)
+   public void TakeDamage(int damage)
+{
+    if (isDead) return;
+
+    currentHealth -= damage;
+    currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+    healthBar.SetHealth(currentHealth);
+
+    if (currentHealth <= 0)
     {
-        if (isDead) return;
-
-        currentHealth -= damage;
-        Debug.Log("Player Health: " + currentHealth);
-
-        animator.SetTrigger("Hurt");
-
-        Debug.Log("Player took damage: " + damage);
-
-
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
+        Die();
+        return; // 🔴 VERY IMPORTANT
     }
 
-    void Die()
-    {
-        isDead = true;
-        animator.SetTrigger("Die");
-        GetComponent<PlayerController>().enabled = false;
-    }
+    animator.SetTrigger("Hurt");
+}
+
+
+  void Die()
+{
+    if (isDead) return;
+
+    isDead = true;
+
+    animator.ResetTrigger("Hurt"); // safety
+    animator.SetBool("IsDead", true);
+
+    GetComponent<PlayerController>().enabled = false;
+}
+
 }
