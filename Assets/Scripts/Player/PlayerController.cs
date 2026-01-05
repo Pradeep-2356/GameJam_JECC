@@ -29,6 +29,8 @@ public class PlayerController : MonoBehaviour
     private Vector3 moveInput;
     private float targetSpeed;
 
+    private bool IsDead;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -178,5 +180,8 @@ public class PlayerController : MonoBehaviour
     public void EndAction()
     {
         isPerformingAction = false;
+        if (IsDead) return;
+        isPerformingAction = false;
+
     }
 }
