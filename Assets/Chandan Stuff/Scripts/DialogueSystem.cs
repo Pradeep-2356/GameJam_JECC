@@ -46,6 +46,9 @@ public class DialogueSystem : MonoBehaviour
     {
         IsDialogueActive = false;
         gameObject.SetActive(false);
+
+        FindObjectOfType<PlayerController>().OnDialogueEnded();
+
         return;
     }
 

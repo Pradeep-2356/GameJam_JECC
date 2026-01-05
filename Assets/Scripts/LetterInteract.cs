@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class LetterInteract : MonoBehaviour
+public class LetterInteract : Interactable
 {
     private Animator animator;
     private bool isOpened = false;
@@ -10,7 +10,7 @@ public class LetterInteract : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    public void Interact()
+    public override void Interact()
     {
         if (isOpened) return;
 
