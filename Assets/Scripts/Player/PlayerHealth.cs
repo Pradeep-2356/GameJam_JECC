@@ -37,16 +37,38 @@ public class PlayerHealth : MonoBehaviour
 }
 
 
-  void Die()
+void Die()
 {
     if (isDead) return;
 
     isDead = true;
 
-    animator.ResetTrigger("Hurt"); // safety
+    // Stop other animations
+    animator.ResetTrigger("Hurt");
     animator.SetBool("IsDead", true);
 
-    GetComponent<PlayerController>().enabled = false;
+    // Lock player controller
+    PlayerController controller = GetComponent<PlayerController>();
+    if (controller != null)
+        controller.enabled = false;
+
+    // Stop physics movement
+    Rigidbody rb = GetComponent<Rigidbody>();
+    if (rb != null)
+    {
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        rb.isKinematic = true;
+    }
+
+    // Optional: unlock cursor if needed
+    // Cursor.lockState = CursorLockMode.None;
+    // Cursor.visible = true;
+
+     Destroy(gameObject, 1f);
+    Debug.Log("PLAYER DEAD - CONTROLS LOCKED");
+      GameManager.Instance.GameOver();
 }
+
 
 }

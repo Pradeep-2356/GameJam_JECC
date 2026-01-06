@@ -47,7 +47,9 @@ void Die()
     GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = false;
     GetComponent<EnemyAI>().enabled = false;
 
-    Destroy(gameObject, 3f); // make sure animation length < 3s
+     GameManager.Instance.DemonKilled();
+
+    Destroy(gameObject, 1f); // make sure animation length < 3s
 }
 
 
