@@ -4,7 +4,19 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Sun_Temple/Scenes/IntroScene.unity
+    guid: f85ef4fffc1aaa3419d62eb138cd5b54
+  - enabled: 1
+    path: Assets/Sun_Temple/Scenes/Main_Menu.unity
+    guid: ffcd7ebc7f8c5d44c972469d8840c4b4
+  - enabled: 1
+    path: Assets/Sun_Temple/Scenes/CutScene.unity
+    guid: 9d6326b1de5f218449bb17c92648ff31
+  - enabled: 1
+    path: Assets/Sun_Temple/Scenes/DemoScene.unity
+    guid: d8f213b28287d8b4dab42cf4a34f94e5
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 289c1b55c9541489481df5cc06664110, type: 3}
   m_UseUCBPForAssetBundles: 0
