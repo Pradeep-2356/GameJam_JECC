@@ -18,7 +18,7 @@ public class PlayerHealth : MonoBehaviour
         healthBar.SetMaxHealth(maxHealth);
     }
 
-   public void TakeDamage(int damage)
+  public void TakeDamage(int damage)
 {
     if (isDead) return;
 
@@ -30,11 +30,13 @@ public class PlayerHealth : MonoBehaviour
     if (currentHealth <= 0)
     {
         Die();
-        return; // 🔴 VERY IMPORTANT
+        return;
     }
 
+    // ❌ DO NOT LOCK PLAYER HERE
     animator.SetTrigger("Hurt");
 }
+
 
 
 void Die()

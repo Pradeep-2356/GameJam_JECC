@@ -55,20 +55,32 @@ public class PlayerController : MonoBehaviour
         environmentSound.Play();
     }
 
-    void Update()
+   void Update()
+{
+    CheckGround();
+
+    // 🔓 Safety unlock if not in attack animations
+    if (isPerformingAction)
     {
-        CheckGround();
+        AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
 
-        if (!isPerformingAction)
+        if (!state.IsTag("Action"))
         {
-            ReadMovementInput();
-            HandleActions();
+            isPerformingAction = false;
         }
-
-        UpdateAnimator();
-        HandleMovementAudio();
-        HandleLandingSound();
     }
+
+    if (!isPerformingAction)
+    {
+        ReadMovementInput();
+        HandleActions();
+    }
+
+    UpdateAnimator();
+    HandleMovementAudio();
+    HandleLandingSound();
+}
+
 
     void FixedUpdate()
     {
