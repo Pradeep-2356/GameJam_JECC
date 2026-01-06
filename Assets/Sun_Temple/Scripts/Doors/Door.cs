@@ -30,9 +30,11 @@ namespace SunTemple
 
 		private bool scriptIsEnabled = true;
 
+		public AudioSource doorOpenSound;
+		public AudioSource doorCloseSound;
 
-
-        void Start(){
+        void Start()
+		{
             StartRotation = transform.localEulerAngles ;
 			DoorCollider = GetComponent<BoxCollider> ();
 
@@ -74,7 +76,7 @@ namespace SunTemple
 					Rotate ();
 				}
 
-				if (Input.GetKeyDown (KeyCode.Mouse0)) {
+				if (Input.GetKeyDown (KeyCode.E)) {
 					TryToOpen ();
 				}
 
@@ -128,9 +130,15 @@ namespace SunTemple
         public void Activate()
         {
             if (DoorClosed)
-                Open();
+			{
+                doorOpenSound.Play();
+				Open();
+			}
             else
-                Close();
+			{
+                doorCloseSound.Play();
+				Close();
+            }
         }
 
 

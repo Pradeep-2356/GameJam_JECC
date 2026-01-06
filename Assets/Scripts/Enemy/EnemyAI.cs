@@ -16,6 +16,9 @@ public class EnemyAI : MonoBehaviour
     public float attackCooldown = 1.5f;
     private float lastAttackTime;
 
+    [Header("Audio")]
+    public AudioSource growlSound;
+
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -24,18 +27,27 @@ public class EnemyAI : MonoBehaviour
         agent.stoppingDistance = attackRange;
     }
 
+    private bool hasGrowled = false;
+
     private void Update()
     {
-        if (!agent.isOnNavMesh) return;   // ⭐ CRITICAL FIX
+        if (!agent.isOnNavMesh) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
 
         if (distance > detectionRange)
         {
             Idle();
+            hasGrowled = false;   // reset when player leaves
         }
         else if (distance > attackRange)
         {
+            if (!hasGrowled)
+            {
+                growlSound.Play();
+                hasGrowled = true;
+            }
+
             Chase();
         }
         else
